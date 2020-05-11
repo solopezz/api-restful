@@ -15,8 +15,19 @@ class User extends Authenticatable
      *
      * @var array
      */
+    const VERIFIED = '1';
+    const NOT_VERIFIED = '0';
+
+    const ADMIN = 'true';
+    const REGULAR = 'false';
+
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 
+        'email', 
+        'password',
+        'verified',
+        'varification_token',
+        'admin',
     ];
 
     /**
@@ -25,7 +36,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token', 'varification_token'
     ];
 
     /**
@@ -36,4 +47,19 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function isVerified()
+    {
+        return $this->status == Product::IN_STOCK;
+    }
+
+    public function isAdmin()
+    {
+        return $this->status == Product::IN_STOCK;
+    }
+
+    public function generetaVerificationToken()
+    {
+        return str_random(40);
+    }
 }

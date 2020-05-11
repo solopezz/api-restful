@@ -14,6 +14,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:api')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+
+//only -> solo se utilizaran index y show
+Route::resource('buyers', 'Buyer\BuyerController', ['only' => ['index', 'show']]);
+
+//except -> todos los metodos menos create y edit
+Route::resource('categories', 'Category\CategoryController', ['except' => ['create', 'edit']]);
+
+Route::resource('products', 'Product\ProductController', ['only' => ['index', 'show']]);
+
+Route::resource('transactions', 'Transaction\TransactionController', ['only' => ['index', 'show']]);
+
+Route::resource('sellers', 'Seller\SellerController', ['only' => ['index', 'show']]);
+
+Route::resource('users', 'User\UserController', ['except' => ['create', 'edit']]);
+
