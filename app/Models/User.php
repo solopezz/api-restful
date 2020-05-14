@@ -1,10 +1,11 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -20,6 +21,8 @@ class User extends Authenticatable
 
     const ADMIN = 'true';
     const REGULAR = 'false';
+
+    protected $table = 'users';
 
     protected $fillable = [
         'name', 
@@ -58,8 +61,8 @@ class User extends Authenticatable
         return $this->status == Product::IN_STOCK;
     }
 
-    public function generetaVerificationToken()
+    public static function genereteVerificationToken()
     {
-        return str_random(40);
+        return Str::random(40);
     }
 }
