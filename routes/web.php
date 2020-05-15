@@ -14,16 +14,5 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-	$dsn = 'mysql:dbname=apiresful;host=127.0.0.1';
-	$usuario = 'root';
-	$contraseña = '';
-
-	try {
-		$gbd = new PDO($dsn, $usuario, $contraseña);
-		echo 'Conexión establecida';
-	} catch (PDOException $e) {
-		echo 'Falló la conexión: ' . $e->getMessage();
-	}
-	// echo phpinfo();
-    // return view('welcome');
+    return view('welcome');
 });
