@@ -3,13 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+     use SoftDeletes; 
+
+     use Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -23,6 +26,8 @@ class User extends Authenticatable
     const REGULAR = 'false';
 
     protected $table = 'users';
+
+    protected $dates = ['deleted_at'];
 
     protected $fillable = [
         'name', 
@@ -53,12 +58,12 @@ class User extends Authenticatable
 
     public function isVerified()
     {
-        return $this->status == Product::IN_STOCK;
+        return $this->verified == User::VERIFIED;
     }
 
     public function isAdmin()
     {
-        return $this->status == Product::IN_STOCK;
+        return $this->admin == User::ADMIN;
     }
 
     public static function genereteVerificationToken()

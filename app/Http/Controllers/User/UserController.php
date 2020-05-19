@@ -14,18 +14,8 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
-        return User::all();
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+    {  //siempre al por estandar es recomendable usar la raiz de data
+        return response()->json(['data' => User::all()], 200);
     }
 
     /**
@@ -36,7 +26,23 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+
+       $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:users',
+            'password' => ' required|min:6|confirmed'
+        ]);
+
+        $userData = $request->all();
+        $userData['password'] = bcrypt($request->password);
+        $userData['verified'] = User::NOT_VERIFIED;
+        $userData['varification_token'] = User::genereteVerificationToken();
+        $userData['admin'] = User::REGULAR;
+
+        $user = User::create($userData);
+
+        return response()->json(['data' => $user], 201);
     }
 
     /**
@@ -44,21 +50,10 @@ class UserController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+     */  //implementamos toute model binding User $users
+    public function show(User $user)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        return response()->json(['data' => $user], 200);
     }
 
     /**
@@ -68,9 +63,49 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, User $user)
     {
-        //
+        $request->validate([
+            //El email actual del usaurio lo ignora $user->id
+            'email' => 'email|unique:users,email,' . $user->id,
+            'password' => 'min:6|confirmed',
+            'admin' => 'in:' . User::ADMIN . ',' . User::REGULAR,
+        ]);
+
+        //si hay en el request el campo name se actualiza
+        if ($request->has('name')) {
+            $user->name = $request->name;
+        }
+        //si email es mandado y el email es diferente al que esta registrado se actualiza
+        if ($request->has('email')  && $user->email != $request->email) {
+            //el usuario pasa a no verificado
+            $user->verified = User::NOT_VERIFIED;
+            //se vuelve a generar el token
+            $user->varification_token = User::genereteVerificationToken();
+            //se actualiza el email
+            $user->email = $request->email;
+        }
+
+        if ($request->has('password')) {
+            $user->password = bcrypt($request->password);
+        }
+
+        if ($request->has('admin')) {
+            //si el usuario no esta verificado retorna el siguiente error
+            if (!$user->isVerified()) {
+                return response()->json(['error' => 'Unicamente los usuarios verificaods pueden cambiar su valor a administrador'], 409);
+            }
+            //se acutualiza
+            $user->admin = $request->admin;
+        }
+        //si no hay ningun cambio en el modelo user retorna el error siguiente
+        if (!$user->isDirty()) {
+            return response()->json(['error' => 'Se debe de especificar al menos un cambio'], 422);
+        }
+
+        $user->save();
+
+        return response()->json(['data' => $user], 200);
     }
 
     /**
@@ -79,8 +114,10 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(User $user)
     {
-        //
+        $user->delete();
+
+        return response()->json(['data' => $user], 200);
     }
 }
