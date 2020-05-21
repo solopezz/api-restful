@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\ApiController;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class UserController extends Controller
+class UserController extends ApiController
 {
     /**
      * Display a listing of the resource.
@@ -14,8 +14,9 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {  //siempre al por estandar es recomendable usar la raiz de data
-        return response()->json(['data' => User::all()], 200);
+    {  
+        //se usa el metodo del trait ApiResponse
+        return $this->showAll(User::all());
     }
 
     /**
@@ -42,7 +43,7 @@ class UserController extends Controller
 
         $user = User::create($userData);
 
-        return response()->json(['data' => $user], 201);
+        return $this->showOne($user, 201);
     }
 
     /**
@@ -53,7 +54,7 @@ class UserController extends Controller
      */  //implementamos toute model binding User $users
     public function show(User $user)
     {
-        return response()->json(['data' => $user], 200);
+        return $this->showOne($user, 200);
     }
 
     /**
@@ -93,19 +94,19 @@ class UserController extends Controller
         if ($request->has('admin')) {
             //si el usuario no esta verificado retorna el siguiente error
             if (!$user->isVerified()) {
-                return response()->json(['error' => 'Unicamente los usuarios verificaods pueden cambiar su valor a administrador'], 409);
+                return $this->errorResponse('Unicamente los usuarios verificaods pueden cambiar su valor a administrador', 409);
             }
             //se acutualiza
             $user->admin = $request->admin;
         }
         //si no hay ningun cambio en el modelo user retorna el error siguiente
         if (!$user->isDirty()) {
-            return response()->json(['error' => 'Se debe de especificar al menos un cambio'], 422);
+            return $this->errorResponse('Se debe de especificar al menos un cambio', 422);
         }
 
         $user->save();
 
-        return response()->json(['data' => $user], 200);
+        return $this->showOne($user, 200);
     }
 
     /**
@@ -117,7 +118,7 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $user->delete();
-
-        return response()->json(['data' => $user], 200);
+        //se usa metodo showOne del trait
+        return $this->showOne($user, 200);
     }
 }

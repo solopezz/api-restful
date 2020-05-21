@@ -10,9 +10,9 @@ use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
-     use SoftDeletes; 
+   // use SoftDeletes; 
 
-     use Notifiable;
+   use Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -25,7 +25,7 @@ class User extends Authenticatable
     const ADMIN = 'true';
     const REGULAR = 'false';
 
-    protected $table = 'users';
+    protected $table = 'userss';
 
     protected $dates = ['deleted_at'];
 
@@ -55,6 +55,23 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    //un mutador se utiliza el valor original de un atributo antes de hacer la insercion en la base de datos ejemplo el valor se envia asi SALVAdOr se stransforma y se guarda asi salvador
+    public function setNameAttribute($value)
+    {
+        $this->attributes['name'] = strtolower($value);
+    }
+
+    //accesor es cuando se modifica el valor despues de obtenerlo desde la base de datos en este ejemplo el name sera retorno en Salvador Ortiz pero en la base de datos es asi salvador ortiz
+    public function getNameAttribute($value)
+    {
+        return ucwords($value);
+    }
+
+    public function setEmailAttribute($value)
+    {
+        $this->attributes['email'] = strtolower($value);
+    }
 
     public function isVerified()
     {
