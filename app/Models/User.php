@@ -10,9 +10,7 @@ use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
-   // use SoftDeletes; 
-
-   use Notifiable;
+   use Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -25,7 +23,7 @@ class User extends Authenticatable
     const ADMIN = 'true';
     const REGULAR = 'false';
 
-    protected $table = 'userss';
+    protected $table = 'users';
 
     protected $dates = ['deleted_at'];
 

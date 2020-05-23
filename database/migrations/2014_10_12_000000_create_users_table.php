@@ -25,7 +25,7 @@ class CreateUsersTable extends Migration
             $table->string('varification_token')->nullable();
             $table->string('admin')->default(User::REGULAR);
             $table->timestamps();
-            // $table->softDeletes();
+            $table->softDeletes();
         });
     }
 

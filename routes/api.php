@@ -20,6 +20,9 @@ use Illuminate\Support\Facades\Route;
 
 //only -> solo se utilizaran index y show
 Route::resource('buyers', 'Buyer\BuyerController', ['only' => ['index', 'show']]);
+Route::resource('buyers.transactions', 'Buyer\BuyerTransactionController', ['only' => ['index']]);
+Route::resource('buyers.products', 'Buyer\BuyerProductController', ['only' => ['index']]);
+
 
 //except -> todos los metodos menos create y edit
 Route::resource('categories', 'Category\CategoryController', ['except' => ['create', 'edit']]);
@@ -27,6 +30,9 @@ Route::resource('categories', 'Category\CategoryController', ['except' => ['crea
 Route::resource('products', 'Product\ProductController', ['only' => ['index', 'show']]);
 
 Route::resource('transactions', 'Transaction\TransactionController', ['only' => ['index', 'show']]);
+//Controlador complejo que involucra a transaciones y categorias
+Route::resource('transactions.categories', 'Transaction\TransactionCategoryController', ['only' => ['index']]);
+Route::resource('transactions.sellers', 'Transaction\TransactionSellerController', ['only' => ['index']]);
 
 Route::resource('sellers', 'Seller\SellerController', ['only' => ['index', 'show']]);
 

@@ -42,7 +42,8 @@ class UserController extends ApiController
         $userData['admin'] = User::REGULAR;
 
         $user = User::create($userData);
-
+        
+        //se usa metodo showOne del trait
         return $this->showOne($user, 201);
     }
 
@@ -53,7 +54,8 @@ class UserController extends ApiController
      * @return \Illuminate\Http\Response
      */  //implementamos toute model binding User $users
     public function show(User $user)
-    {
+    {        
+        //se usa metodo showOne del trait
         return $this->showOne($user, 200);
     }
 
@@ -106,6 +108,7 @@ class UserController extends ApiController
 
         $user->save();
 
+        //se usa metodo showOne del trait
         return $this->showOne($user, 200);
     }
 
