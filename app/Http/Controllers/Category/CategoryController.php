@@ -59,6 +59,7 @@ class CategoryController extends ApiController
     public function update(Request $request, Category $category)
     {
         //Fill" significa literalmente "llenar
+        //equivalente a hacer: $user->username = 'IsraelOrtuno';
         //$request->only = aqui solo se trae los datos espesificados de la respuesta
         $category->fill($request->only([
             'name',

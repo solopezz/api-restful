@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\ProductStock;
 use App\Models\Category;
 use App\Models\Seller;
 use App\Models\Transaction;
@@ -17,7 +18,7 @@ class Product extends Model
 
 	protected $dates = ['deleted_at'];
 	
-    protected $fillable = [
+	protected $fillable = [
 		'name', 
 		'description',
 		'quantity',
@@ -25,6 +26,16 @@ class Product extends Model
 		'img',
 		'seller_id',
 	];
+	
+	//Otra forma de registar un evento cada ves que se actuliza un producto se ejecuta ProductStock es equivalente a usar triggers
+	protected $dispatchesEvents = [
+		'updated' => ProductStock::class,
+	];
+
+	protected $hidden = [
+		'pivot' //->se oculta la propiedad de pivot en la respuesta json
+	];
+
 
 	public function available()
 	{
@@ -37,9 +48,9 @@ class Product extends Model
 	}
 
 	public function transactions()
-    {
-    	return $this->hasMany(Transaction::class);
-    }
+	{
+		return $this->hasMany(Transaction::class);
+	}
 
 	public function categories()
 	{
