@@ -22,7 +22,6 @@ class BuyerCategoryController extends ApiController
         ->get()
         ->pluck('product.categories')
         ->collapse() //junta los arrays de una matriz [[1],[2,3]] = [1,2,3]
-        ->sortBy('id')
         ->unique('id')
         ->values();
         

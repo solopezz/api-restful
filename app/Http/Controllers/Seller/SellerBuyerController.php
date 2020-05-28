@@ -24,8 +24,7 @@ class SellerBuyerController extends ApiController
         ->pluck('transactions')
         ->collapse()
         ->pluck('buyer')
-        ->unique('id')
-        ->sortBy('id');
+        ->unique('id');
 
         return $this->showAll($buyers);
         

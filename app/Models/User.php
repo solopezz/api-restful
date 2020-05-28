@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Events\UserCreated;
+use App\Events\UserMailCahnged;
+use App\Transformers\UserTransformer;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -22,6 +25,8 @@ class User extends Authenticatable
 
     const ADMIN = 'true';
     const REGULAR = 'false';
+
+    public $transformer = UserTransformer::class; 
 
     protected $table = 'users';
 
@@ -52,6 +57,12 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+    ];
+
+    //Otra forma de registar un evento cada ves que se actuliza un producto se ejecuta ProductStock es equivalente a usar triggers
+    protected $dispatchesEvents = [
+        'created' => UserCreated::class,
+        'updated' => UserMailCahnged::class,
     ];
 
     //un mutador se utiliza el valor original de un atributo antes de hacer la insercion en la base de datos ejemplo el valor se envia asi SALVAdOr se stransforma y se guarda asi salvador

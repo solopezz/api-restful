@@ -20,7 +20,6 @@ class CategorySellerController extends ApiController
         ->with('seller')
         ->get()
         ->pluck('seller')
-        ->sortBy('id')
         ->unique('id')
         ->values();
 

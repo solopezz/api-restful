@@ -20,7 +20,12 @@ class EventServiceProvider extends ServiceProvider
             SendEmailVerificationNotification::class,
         ],
         ProductStock::class => [
-            
+        ],
+        'App\Events\UserCreated' => [
+            'App\Listeners\SendVerifyUser',
+        ],
+        'App\Events\UserMailCahnged' => [
+            'App\Listeners\SendVerifyUserChangeEmail',
         ],
     ];
 

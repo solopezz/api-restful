@@ -25,7 +25,6 @@ class CategoryBuyerController extends ApiController
         ->pluck('transactions')
         ->collapse()
         ->pluck('buyer')
-        ->sortBy('id')
         ->unique('id')
         ->values();
 

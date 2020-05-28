@@ -23,8 +23,7 @@ class SellerCategoryController extends ApiController
         ->pluck('categories')
         ->collapse()
         ->unique('id')
-        ->values()
-        ->sortBy('id');
+        ->values();
 
         return $this->showAll($categories);
 

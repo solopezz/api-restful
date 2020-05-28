@@ -22,10 +22,7 @@ class CategoryTransactionController extends ApiController
         ->with('transactions')
         ->get()
         ->pluck('transactions')
-        ->collapse()
-        ->sortBy('id');
-        // ->unique('id')
-        // ->values();
+        ->collapse();
 
         return $this->showAll($transactions);
 

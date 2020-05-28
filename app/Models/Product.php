@@ -6,6 +6,7 @@ use App\Events\ProductStock;
 use App\Models\Category;
 use App\Models\Seller;
 use App\Models\Transaction;
+use App\Transformers\ProductTransformer;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -15,6 +16,8 @@ class Product extends Model
 	
 	const IN_STOCK = 1;
 	const OUT_OF_STOCK = 0;
+
+    public $transformer = ProductTransformer::class; 
 
 	protected $dates = ['deleted_at'];
 	

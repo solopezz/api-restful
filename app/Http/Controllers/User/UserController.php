@@ -3,11 +3,23 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\ApiController;
+use App\Mail\UserVeryfy;
 use App\Models\User;
+use App\Transformers\UserTransformer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends ApiController
 {
+
+    public function __construct()
+    {
+        //llamamos al contructor del padre
+        parent::__construct();
+
+        $this->middleware('transform.input:'.UserTransformer::class)->only(['store', 'update']);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -29,23 +41,23 @@ class UserController extends ApiController
     {
 
 
-       $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
-            'password' => ' required|min:6|confirmed'
-        ]);
+     $request->validate([
+        'name' => 'required',
+        'email' => 'required|email|unique:users',
+        'password' => ' required|min:6|confirmed'
+    ]);
 
-        $userData = $request->all();
-        $userData['password'] = bcrypt($request->password);
-        $userData['verified'] = User::NOT_VERIFIED;
-        $userData['varification_token'] = User::genereteVerificationToken();
-        $userData['admin'] = User::REGULAR;
+     $userData = $request->all();
+     $userData['password'] = bcrypt($request->password);
+     $userData['verified'] = User::NOT_VERIFIED;
+     $userData['varification_token'] = User::genereteVerificationToken();
+     $userData['admin'] = User::REGULAR;
 
-        $user = User::create($userData);
-        
+     $user = User::create($userData);
+
         //se usa metodo showOne del trait
-        return $this->showOne($user, 201);
-    }
+     return $this->showOne($user, 201);
+ }
 
     /**
      * Display the specified resource.
@@ -123,5 +135,32 @@ class UserController extends ApiController
         $user->delete();
         //se usa metodo showOne del trait
         return $this->showOne($user, 200);
+    }
+
+    public function verify($token)
+    {
+
+        $user = User::where('varification_token', $token)->firstOrFail();
+
+        $user->verified = User::VERIFIED;
+        $user->varification_token = null;
+
+        $user->save();
+
+        return $this->showMessage('El usuario a sido verificado');
+    }
+
+    public function resend(User $user)
+    {
+
+        if ($user->isVerified()) {
+            return $this->errorResponse('Este usaurio ya fue verificado', 422);
+        }
+        //Si hay algun problema al enviar el email por problemas terceros se vuelve a intentar 5 veces con una espera de 1000 mili segundos cada una en caso de que no se pueda lanza el error correspondiente
+        retry(5, function() use($user) {
+            Mail::to($user)->send(new UserVeryfy($user));
+        },1000);
+
+        return $this->showMessage('El correo de verificacion se ha enviado');
     }
 }

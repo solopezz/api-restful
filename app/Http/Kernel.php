@@ -13,6 +13,7 @@ class Kernel extends HttpKernel
      *
      * @var array
      */
+    //middleware global pero sin nombre el que no tenga nombre implica no poderle pasar parametros
     protected $middleware = [
         \App\Http\Middleware\TrustProxies::class,
         \Fruitcake\Cors\HandleCors::class,
@@ -27,8 +28,12 @@ class Kernel extends HttpKernel
      *
      * @var array
      */
+    //aqui tambien se pueden agregar middleware globales no se necesita especificar en el cntrolador o en la ruta para que se ejecute
+    //si el middleware trabaja despues de la respuesta es buena idea agregarlo al principio 
+    //:(aqui se pasan los parametros) 
     protected $middlewareGroups = [
         'web' => [
+            'signature:X-Application-Name',
             \App\Http\Middleware\EncryptCookies::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
@@ -39,7 +44,9 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
-            'throttle:60,1',
+            'signature:X-Application-Name',
+            //numero de peticiones al servidor por minuto ejemplo 60 x 1 minuto 
+            'throttle:10,1',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
     ];
@@ -60,7 +67,10 @@ class Kernel extends HttpKernel
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
+        //Se puede mejorar la respuesta de throttle o adecuarla a algo propio
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        'signature' => \App\Http\Middleware\SignatureMiddleware::class,
+        'transform.input' => \App\Http\Middleware\TransformInput::class
     ];
 }

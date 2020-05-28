@@ -20,8 +20,7 @@ class SellerTransactionController extends ApiController
         ->with('transactions')
         ->get()
         ->pluck('transactions')
-        ->collapse()
-        ->sortBy('id');
+        ->collapse();
 
         return $this->showAll($transactions);
     }
