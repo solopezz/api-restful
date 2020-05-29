@@ -6,6 +6,7 @@ use App\Traits\ApiResponse;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Session\TokenMismatchException;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
@@ -85,6 +86,11 @@ class Handler extends ExceptionHandler
             if ($codigo ==  1451) {
                 return $this->errorResponse("No se pudo eliminar de forma permanente el recurso ya que se encuentra relacionado", 409);
             }
+        }
+
+        if ($exception instanceof TokenMismatchException) {
+            //si hay algun error de token crfs regresa a la pagina anterior del formpulario con los valores enviados 
+            return redirect()->back()->withInput($request->input());
         }
 
         if (config('app.debug')) {

@@ -14,10 +14,13 @@ class UserController extends ApiController
 
     public function __construct()
     {
-        //llamamos al contructor del padre
-        parent::__construct();
+        //Proteccion mas segura ya que es con un usario de nuestra base de datos
+        $this->middleware('auth:api')->except(['index', 'show', 'verify']);
 
-        $this->middleware('transform.input:'.UserTransformer::class)->only(['store', 'update']);
+        //aqui protegemos algunas rutas con client.credentials
+        $this->middleware('client.credentials')->only(['index', 'show']);
+
+        $this->middleware('transform.input:'.UserTransformer::class)->only(['store', 'resend']);
     }
 
     /**

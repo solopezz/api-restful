@@ -29,12 +29,12 @@ class AppServiceProvider extends ServiceProvider
         //Todas las cadenas de caracteres tendran el tamaño de 191 caracteres
         Schema::defaultStringLength(191);
 
-         DB::listen(function($query) {
-            Log::info(
-                $query->sql,
-                $query->bindings,
-                $query->time
-            );
-        });
+        //  DB::listen(function($query) {
+        //     Log::info(
+        //         $query->sql,
+        //         $query->bindings,
+        //         $query->time
+        //     );
+        // });
     }
 }
